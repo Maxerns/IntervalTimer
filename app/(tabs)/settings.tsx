@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#232731',
-    position: 'relative', 
+    position: 'relative',
   },
   hulaMainImage: {
     width: windowWidth * 1,
@@ -34,7 +34,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const SettingsPage = () => {
+interface SettingsPageProps {
+  onGoBack: () => void;
+}
+
+const SettingsPage = ({ onGoBack }: SettingsPageProps) => {
   const [intervalTime, setIntervalTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
   const [preparationTime, setPreparationTime] = useState(0);
@@ -85,6 +89,7 @@ const SettingsPage = () => {
           style={{ color: '#fff' }}
         />
         <Button title="Save" onPress={handleSubmit} />
+        <Button title="Go Back" onPress={onGoBack} />
       </View>
     </View>
   );

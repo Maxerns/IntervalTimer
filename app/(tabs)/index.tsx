@@ -1,6 +1,9 @@
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
+import SettingsPage from './settings';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -12,7 +15,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#232731',
-    position: 'relative', 
+    position: 'relative',
   },
   hulaMainImage: {
     width: windowWidth * 1,
@@ -29,10 +32,10 @@ const styles = StyleSheet.create({
     opacity: 0.15,
   },
   settingsContainer: {
-    position: 'absolute', 
-    top: 50, 
+    position: 'absolute',
+    top: 50,
     left: 350,
-    flexDirection: 'row', 
+    flexDirection: 'row',
   },
   playContainer: {
     position: 'absolute',
@@ -46,17 +49,41 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function App() {
+interface AppProps {
+  onSettingsClick: () => void;
+}
+
+function App({ onSettingsClick }: AppProps) {
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/hulamain.png')} style={styles.hulaMainImage} />
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
-      <View style={styles.settingsContainer}>
-        <Feather name="settings" size={settingSize} color="#4E586E" />
-      </View>
       <View style={styles.playContainer}>
-        <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />  
+        <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
       </View>
+      <TouchableOpacity style={styles.settingsContainer} onPress={onSettingsClick}>
+        <Feather name="settings" size={settingSize} color="#4E586E" />
+      </TouchableOpacity>
     </View>
   );
 }
+
+const MainScreen = () => {
+  const [showSettings, setShowSettings] = useState(false);
+
+  const handleSettingsClick = () => {
+    setShowSettings(true);
+  };
+
+  const handleGoBack = () => {
+    setShowSettings(false);
+  };
+
+  return showSettings ? (
+    <SettingsPage onGoBack={handleGoBack} />
+  ) : (
+    <App onSettingsClick={handleSettingsClick} />
+  );
+};
+
+export default MainScreen;
