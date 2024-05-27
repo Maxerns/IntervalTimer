@@ -36,9 +36,10 @@ const styles = StyleSheet.create({
 
 interface SettingsPageProps {
   onGoBack: () => void;
+  onSaveSettings: (intervalTime: number, restTime: number, preparationTime: number) => void;
 }
 
-const SettingsPage = ({ onGoBack }: SettingsPageProps) => {
+const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
   const [intervalTime, setIntervalTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
   const [preparationTime, setPreparationTime] = useState(0);
@@ -59,6 +60,8 @@ const SettingsPage = ({ onGoBack }: SettingsPageProps) => {
     console.log('Interval Time:', intervalTime);
     console.log('Rest Time:', restTime);
     console.log('Preparation Time:', preparationTime);
+    onSaveSettings(intervalTime, restTime, preparationTime);
+    onGoBack();
   };
 
   return (
