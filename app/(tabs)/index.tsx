@@ -47,6 +47,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+  intervalTimer: {
+    position: 'absolute',
+    top: 120,
+    fontSize: 48,
+    color: '#4E586E'
+  },
 });
 
 interface AppProps {
@@ -87,7 +93,7 @@ function App({ onSettingsClick, intervalTime }: AppProps) {
         <TouchableOpacity onPress={handlePlayClick}>
           <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
         </TouchableOpacity>
-        <Text style={{ fontSize: 48, color: '#4E586E' }}>{remainingTime}</Text>
+        <Text style={styles.intervalTimer}>{remainingTime}</Text>
       </View>
       <TouchableOpacity style={styles.settingsContainer} onPress={onSettingsClick}>
         <Feather name="settings" size={settingSize} color="#4E586E" />
