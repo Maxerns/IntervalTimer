@@ -1,4 +1,3 @@
-expo-env.d.ts
 .expo/
 dist/
 npm-debug.*
@@ -9,6 +8,9 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+package-lock.json
+package.json
+expo-env.d.ts
 
 # macOS
 .DS_Store

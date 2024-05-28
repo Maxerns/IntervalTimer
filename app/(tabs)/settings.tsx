@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, Dimensions } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { StyleSheet, View, Text, Button, Image, Dimensions,} from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -43,6 +44,8 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
   const [intervalTime, setIntervalTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
   const [preparationTime, setPreparationTime] = useState(0);
+  const [minutes, setMinutes] = useState('00');
+  const [seconds, setSeconds] = useState('00');
 
   const handleIntervalTimeChange = (value: string) => {
     setIntervalTime(parseInt(value));
@@ -57,10 +60,8 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
   };
 
   const handleSubmit = () => {
-    console.log('Interval Time:', intervalTime);
-    console.log('Rest Time:', restTime);
-    console.log('Preparation Time:', preparationTime);
-    onSaveSettings(intervalTime, restTime, preparationTime);
+    const intervalTimeInSeconds = parseInt(minutes) * 60 + parseInt(seconds);
+    onSaveSettings(intervalTimeInSeconds, restTime, preparationTime);
     onGoBack();
   };
 
@@ -70,32 +71,33 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
       <View style={styles.content}>
         <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Interval App Settings</Text>
-        <Text style={{ color: '#fff' }}>Interval Time (in seconds):</Text>
-        <TextInput
-          keyboardType="numeric"
-          value={intervalTime.toString()}
-          onChangeText={handleIntervalTimeChange}
-          style={{ color: '#fff' }}
-        />
-        <Text style={{ color: '#fff' }}>Rest Time (in seconds):</Text>
-        <TextInput
-          keyboardType="numeric"
-          value={restTime.toString()}
-          onChangeText={handleRestTimeChange}
-          style={{ color: '#fff' }}
-        />
-        <Text style={{ color: '#fff' }}>Preparation Time (in seconds):</Text>
-        <TextInput
-          keyboardType="numeric"
-          value={preparationTime.toString()}
-          onChangeText={handlePreparationTimeChange}
-          style={{ color: '#fff' }}
-        />
+        <Text style={{ color: '#fff' }}>Interval Time:</Text>
+        <View style={{ flexDirection: 'row' }}>
+        <Picker
+  style={{ height: 50, width: 100, color: '#fff' }}
+  selectedValue={minutes}
+  onValueChange={(itemValue: string) => setMinutes(itemValue)}
+>
+  {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+    <Picker.Item key={value} label={value} value={value} />
+  ))}
+</Picker>
+<Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+<Picker
+  style={{ height: 50, width: 100, color: '#fff' }}
+  selectedValue={seconds}
+  onValueChange={(itemValue: string) => setSeconds(itemValue)}
+>
+  {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+    <Picker.Item key={value} label={value} value={value} />
+  ))}
+</Picker>
+        </View>
         <Button title="Save" onPress={handleSubmit} />
-        <Button title="Go Back" onPress={onGoBack} />
-      </View>
+      <Button title="Go Back" onPress={onGoBack} />
     </View>
-  );
+  </View>
+);
 };
 
 export default SettingsPage;

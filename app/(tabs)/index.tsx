@@ -73,18 +73,27 @@ function App({ onSettingsClick, intervalTime }: AppProps) {
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
   
-    if (isTimerRunning) {
+    if (isTimerRunning && remainingTime > 0) {
       interval = setInterval(() => {
         setRemainingTime((prevTime) => prevTime - 1);
       }, 1000);
+    } else if (remainingTime === 0) {
+      setIsTimerRunning(false);
     }
-  
+    
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, remainingTime]);
+
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/hulamain.png')} style={styles.hulaMainImage} />
@@ -93,7 +102,7 @@ function App({ onSettingsClick, intervalTime }: AppProps) {
         <TouchableOpacity onPress={handlePlayClick}>
           <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
         </TouchableOpacity>
-        <Text style={styles.intervalTimer}>{remainingTime}</Text>
+        <Text style={styles.intervalTimer}>{formatTime(remainingTime)}</Text>
       </View>
       <TouchableOpacity style={styles.settingsContainer} onPress={onSettingsClick}>
         <Feather name="settings" size={settingSize} color="#4E586E" />
