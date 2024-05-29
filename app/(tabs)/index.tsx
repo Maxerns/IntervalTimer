@@ -62,31 +62,49 @@ interface AppProps {
   preparationTime: number;
 }
 
-function App({ onSettingsClick, intervalTime }: AppProps) {
-  const [remainingTime, setRemainingTime] = useState(intervalTime);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppProps) {
+  const [currentTime, setCurrentTime] = useState(preparationTime);
+  const [isPreparationRunning, setIsPreparationRunning] = useState(false);
+  const [isIntervalRunning, setIsIntervalRunning] = useState(false);
+  const [isRestRunning, setIsRestRunning] = useState(false);
 
   const handlePlayClick = () => {
-    setIsTimerRunning(true);
+    setIsPreparationRunning(true);
   };
-  
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-  
-    if (isTimerRunning && remainingTime > 0) {
+
+    if (isPreparationRunning && currentTime > 0) {
       interval = setInterval(() => {
-        setRemainingTime((prevTime) => prevTime - 1);
+        setCurrentTime((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (remainingTime === 0) {
-      setIsTimerRunning(false);
+    } else if (isPreparationRunning && currentTime === 0) {
+      setIsPreparationRunning(false);
+      setIsIntervalRunning(true);
+      setCurrentTime(intervalTime);
+    } else if (isIntervalRunning && currentTime > 0) {
+      interval = setInterval(() => {
+        setCurrentTime((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (isIntervalRunning && currentTime === 0) {
+      setIsIntervalRunning(false);
+      setIsRestRunning(true);
+      setCurrentTime(restTime);
+    } else if (isRestRunning && currentTime > 0) {
+      interval = setInterval(() => {
+        setCurrentTime((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (isRestRunning && currentTime === 0) {
+      setIsRestRunning(false);
     }
-    
+
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, [isTimerRunning, remainingTime]);
+  }, [isPreparationRunning, isIntervalRunning, isRestRunning, currentTime, intervalTime, restTime]);
 
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -102,7 +120,7 @@ function App({ onSettingsClick, intervalTime }: AppProps) {
         <TouchableOpacity onPress={handlePlayClick}>
           <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
         </TouchableOpacity>
-        <Text style={styles.intervalTimer}>{formatTime(remainingTime)}</Text>
+        <Text style={styles.intervalTimer}>{formatTime(currentTime)}</Text>
       </View>
       <TouchableOpacity style={styles.settingsContainer} onPress={onSettingsClick}>
         <Feather name="settings" size={settingSize} color="#4E586E" />

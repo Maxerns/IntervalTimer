@@ -41,27 +41,18 @@ interface SettingsPageProps {
 }
 
 const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
-  const [intervalTime, setIntervalTime] = useState(0);
-  const [restTime, setRestTime] = useState(0);
-  const [preparationTime, setPreparationTime] = useState(0);
-  const [minutes, setMinutes] = useState('00');
-  const [seconds, setSeconds] = useState('00');
-
-  const handleIntervalTimeChange = (value: string) => {
-    setIntervalTime(parseInt(value));
-  };
-
-  const handleRestTimeChange = (value: string) => {
-    setRestTime(parseInt(value));
-  };
-
-  const handlePreparationTimeChange = (value: string) => {
-    setPreparationTime(parseInt(value));
-  };
+  const [intervalMinutes, setIntervalMinutes] = useState('00');
+  const [intervalSeconds, setIntervalSeconds] = useState('00');
+  const [restMinutes, setRestMinutes] = useState('00');
+  const [restSeconds, setRestSeconds] = useState('00');
+  const [preparationMinutes, setPreparationMinutes] = useState('00');
+  const [preparationSeconds, setPreparationSeconds] = useState('00');
 
   const handleSubmit = () => {
-    const intervalTimeInSeconds = parseInt(minutes) * 60 + parseInt(seconds);
-    onSaveSettings(intervalTimeInSeconds, restTime, preparationTime);
+    const intervalTimeInSeconds = parseInt(intervalMinutes) * 60 + parseInt(intervalSeconds);
+    const restTimeInSeconds = parseInt(restMinutes) * 60 + parseInt(restSeconds);
+    const preparationTimeInSeconds = parseInt(preparationMinutes) * 60 + parseInt(preparationSeconds);
+    onSaveSettings(intervalTimeInSeconds, restTimeInSeconds, preparationTimeInSeconds);
     onGoBack();
   };
 
@@ -73,31 +64,81 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
         <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Interval App Settings</Text>
         <Text style={{ color: '#fff' }}>Interval Time:</Text>
         <View style={{ flexDirection: 'row' }}>
-        <Picker
-  style={{ height: 50, width: 100, color: '#fff' }}
-  selectedValue={minutes}
-  onValueChange={(itemValue: string) => setMinutes(itemValue)}
->
-  {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
-    <Picker.Item key={value} label={value} value={value} />
-  ))}
-</Picker>
-<Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
-<Picker
-  style={{ height: 50, width: 100, color: '#fff' }}
-  selectedValue={seconds}
-  onValueChange={(itemValue: string) => setSeconds(itemValue)}
->
-  {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
-    <Picker.Item key={value} label={value} value={value} />
-  ))}
-</Picker>
+          {/* Interval Time Picker */}
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={intervalMinutes}
+            onValueChange={(itemValue: string) => setIntervalMinutes(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={intervalSeconds}
+            onValueChange={(itemValue: string) => setIntervalSeconds(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
         </View>
+
+        <Text style={{ color: '#fff' }}>Rest Time:</Text>
+        <View style={{ flexDirection: 'row' }}>
+          {/* Rest Time Picker */}
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={restMinutes}
+            onValueChange={(itemValue: string) => setRestMinutes(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={restSeconds}
+            onValueChange={(itemValue: string) => setRestSeconds(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+        </View>
+
+        <Text style={{ color: '#fff' }}>Preparation Time:</Text>
+        <View style={{ flexDirection: 'row' }}>
+          {/* Preparation Time Picker */}
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={preparationMinutes}
+            onValueChange={(itemValue: string) => setPreparationMinutes(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Picker
+            style={{ height: 50, width: 100, color: '#fff' }}
+            selectedValue={preparationSeconds}
+            onValueChange={(itemValue: string) => setPreparationSeconds(itemValue)}
+          >
+            {Array.from({ length: 60 }, (_, i) => i < 10 ? `0${i}` : `${i}`).map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+        </View>
+
         <Button title="Save" onPress={handleSubmit} />
-      <Button title="Go Back" onPress={onGoBack} />
+        <Button title="Go Back" onPress={onGoBack} />
+      </View>
     </View>
-  </View>
-);
+  );
 };
 
 export default SettingsPage;
