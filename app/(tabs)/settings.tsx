@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
-import { StyleSheet, View, Text, Button, Image, Dimensions,} from 'react-native';
+import { StyleSheet, View, Text, Button, Image, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -37,7 +37,12 @@ const styles = StyleSheet.create({
 
 interface SettingsPageProps {
   onGoBack: () => void;
-  onSaveSettings: (intervalTime: number, restTime: number, preparationTime: number) => void;
+  onSaveSettings: (
+    intervalTime: number,
+    restTime: number,
+    preparationTime: number,
+    numRounds: number
+  ) => void;
 }
 
 const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
@@ -47,12 +52,14 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
   const [restSeconds, setRestSeconds] = useState('00');
   const [preparationMinutes, setPreparationMinutes] = useState('00');
   const [preparationSeconds, setPreparationSeconds] = useState('00');
+  const [numRounds, setNumRounds] = useState('5');
 
   const handleSubmit = () => {
     const intervalTimeInSeconds = parseInt(intervalMinutes) * 60 + parseInt(intervalSeconds);
     const restTimeInSeconds = parseInt(restMinutes) * 60 + parseInt(restSeconds);
     const preparationTimeInSeconds = parseInt(preparationMinutes) * 60 + parseInt(preparationSeconds);
-    onSaveSettings(intervalTimeInSeconds, restTimeInSeconds, preparationTimeInSeconds);
+    const totalRounds = parseInt(numRounds);
+    onSaveSettings(intervalTimeInSeconds, restTimeInSeconds, preparationTimeInSeconds, totalRounds);
     onGoBack();
   };
 
@@ -64,7 +71,6 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
         <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Interval App Settings</Text>
         <Text style={{ color: '#fff' }}>Interval Time:</Text>
         <View style={{ flexDirection: 'row' }}>
-          {/* Interval Time Picker */}
           <Picker
             style={{ height: 50, width: 100, color: '#fff' }}
             selectedValue={intervalMinutes}
@@ -88,7 +94,6 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
 
         <Text style={{ color: '#fff' }}>Rest Time:</Text>
         <View style={{ flexDirection: 'row' }}>
-          {/* Rest Time Picker */}
           <Picker
             style={{ height: 50, width: 100, color: '#fff' }}
             selectedValue={restMinutes}
@@ -112,7 +117,6 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
 
         <Text style={{ color: '#fff' }}>Preparation Time:</Text>
         <View style={{ flexDirection: 'row' }}>
-          {/* Preparation Time Picker */}
           <Picker
             style={{ height: 50, width: 100, color: '#fff' }}
             selectedValue={preparationMinutes}
@@ -133,6 +137,17 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
             ))}
           </Picker>
         </View>
+
+        <Text style={{ color: '#fff' }}>Number of Rounds:</Text>
+        <Picker
+          style={{ height: 50, width: 100, color: '#fff' }}
+          selectedValue={numRounds}
+          onValueChange={(itemValue: string) => setNumRounds(itemValue)}
+        >
+          {Array.from({ length: 20 }, (_, i) => String(i + 1)).map((value) => (
+            <Picker.Item key={value} label={value} value={value} />
+          ))}
+        </Picker>
 
         <Button title="Save" onPress={handleSubmit} />
         <Button title="Go Back" onPress={onGoBack} />

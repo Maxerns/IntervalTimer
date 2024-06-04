@@ -4,7 +4,6 @@ import { Feather } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import SettingsPage from './settings';
 
-
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 120,
     fontSize: 48,
-    color: '#4E586E'
+    color: '#4E586E',
   },
   roundDisplay: {
     position: 'absolute',
@@ -66,84 +65,113 @@ interface AppProps {
   intervalTime: number;
   restTime: number;
   preparationTime: number;
-  
+  numRounds: number;
 }
 
-function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppProps) {
+function App({
+  onSettingsClick,
+  intervalTime,
+  restTime,
+  preparationTime,
+  numRounds,
+}: AppProps) {
   const [currentTime, setCurrentTime] = useState(preparationTime);
   const [isPreparationRunning, setIsPreparationRunning] = useState(false);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [isRestRunning, setIsRestRunning] = useState(false);
   const [currentRound, setCurrentRound] = useState(1);
+  const [totalRounds, setTotalRounds] = useState(numRounds);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   const handlePlayClick = () => {
+    setIsTimerRunning(true);
     setIsPreparationRunning(true);
   };
 
   useEffect(() => {
-    setCurrentRound(1); // Reset the current round when settings change
+    setTotalRounds(numRounds);
     let interval: NodeJS.Timeout | null = null;
-  
-    const handlePlayClick = () => {
-      setIsPreparationRunning(true);
-    };
-  
-    if (isPreparationRunning && currentTime > 0) {
-      interval = setInterval(() => {
-        setCurrentTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (isPreparationRunning && currentTime === 0) {
-      clearInterval(interval!);
-      setIsPreparationRunning(false);
-      setIsIntervalRunning(true);
-      setCurrentTime(intervalTime);
-    } else if (isIntervalRunning && currentTime > 0) {
-      interval = setInterval(() => {
-        setCurrentTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (isIntervalRunning && currentTime === 0) {
-      clearInterval(interval!);
-      setIsIntervalRunning(false);
-      setIsRestRunning(true);
-      setCurrentTime(restTime);
-    } else if (isRestRunning && currentTime > 0) {
-      interval = setInterval(() => {
-        setCurrentTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (isRestRunning && currentTime === 0) {
-      clearInterval(interval!);
-      setIsRestRunning(false);
-      setCurrentRound((prevRound) => prevRound + 1);
-      handlePlayClick(); // Call handlePlayClick to start the next round
+
+    if (isTimerRunning) {
+      if (isPreparationRunning && currentTime > 0) {
+        interval = setInterval(() => {
+          setCurrentTime((prevTime) => prevTime - 1);
+        }, 1000);
+      } else if (isPreparationRunning && currentTime === 0) {
+        clearInterval(interval!);
+        setIsPreparationRunning(false);
+        setIsIntervalRunning(true);
+        setCurrentTime(intervalTime);
+      } else if (isIntervalRunning && currentTime > 0) {
+        interval = setInterval(() => {
+          setCurrentTime((prevTime) => prevTime - 1);
+        }, 1000);
+      } else if (isIntervalRunning && currentTime === 0) {
+        clearInterval(interval!);
+        setIsIntervalRunning(false);
+        setIsRestRunning(true);
+        setCurrentTime(restTime);
+      } else if (isRestRunning && currentTime > 0) {
+        interval = setInterval(() => {
+          setCurrentTime((prevTime) => prevTime - 1);
+        }, 1000);
+      } else if (isRestRunning && currentTime === 0) {
+        clearInterval(interval!);
+        setIsRestRunning(false);
+        setCurrentRound((prevRound) => prevRound + 1);
+        if (currentRound < totalRounds) {
+          handlePlayClick(); // Call handlePlayClick to start the next round
+        } else {
+          setIsTimerRunning(false);
+          setCurrentRound(1); // Reset the current round
+        }
+      }
+    } else {
+      if (interval) {
+        clearInterval(interval);
+      }
     }
-  
+
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, [isPreparationRunning, isIntervalRunning, isRestRunning, currentTime, intervalTime, restTime]);
-  
+  }, [
+    isPreparationRunning,
+    isIntervalRunning,
+    isRestRunning,
+    currentTime,
+    intervalTime,
+    restTime,
+    numRounds,
+    currentRound,
+    totalRounds,
+    isTimerRunning,
+  ]);
+
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
-  const RoundDisplay = () => {
-    return <Text style={styles.roundDisplay}>Round {currentRound}</Text>;
+  const RoundDisplay = ({ currentRound, totalRounds }: { currentRound: number; totalRounds: number }) => {
+    return <Text style={styles.roundDisplay}>Round {currentRound} / {totalRounds}</Text>;
   };
 
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/hulamain.png')} style={styles.hulaMainImage} />
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
-      <RoundDisplay />
+      <RoundDisplay currentRound={currentRound} totalRounds={totalRounds} />
       <View style={styles.playContainer}>
         <TouchableOpacity onPress={handlePlayClick}>
           <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
         </TouchableOpacity>
-        <Text style={styles.intervalTimer}>{formatTime(currentTime)}</Text>
+        <Text style={styles.intervalTimer}>
+          {isTimerRunning ? formatTime(currentTime) : 'Ready'}
+        </Text>
       </View>
       <TouchableOpacity style={styles.settingsContainer} onPress={onSettingsClick}>
         <Feather name="settings" size={settingSize} color="#4E586E" />
@@ -152,13 +180,12 @@ function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppPr
   );
 }
 
-
 const MainScreen = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [intervalTime, setIntervalTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
   const [preparationTime, setPreparationTime] = useState(0);
-  const [currentRound, setCurrentRound] = useState(1);
+  const [numRounds, setNumRounds] = useState(5);
 
   const handleSettingsClick = () => {
     setShowSettings(true);
@@ -171,11 +198,13 @@ const MainScreen = () => {
   const handleSaveSettings = (
     intervalTimeValue: number,
     restTimeValue: number,
-    preparationTimeValue: number
+    preparationTimeValue: number,
+    numRoundsValue: number
   ) => {
     setIntervalTime(intervalTimeValue);
     setRestTime(restTimeValue);
     setPreparationTime(preparationTimeValue);
+    setNumRounds(numRoundsValue);
   };
 
   return showSettings ? (
@@ -189,6 +218,7 @@ const MainScreen = () => {
       intervalTime={intervalTime}
       restTime={restTime}
       preparationTime={preparationTime}
+      numRounds={numRounds}
     />
   );
 };
