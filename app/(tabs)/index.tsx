@@ -53,6 +53,12 @@ const styles = StyleSheet.create({
     fontSize: 48,
     color: '#4E586E'
   },
+  roundDisplay: {
+    position: 'absolute',
+    top: 80,
+    fontSize: 24,
+    color: '#4E586E',
+  },
 });
 
 interface AppProps {
@@ -60,6 +66,7 @@ interface AppProps {
   intervalTime: number;
   restTime: number;
   preparationTime: number;
+  
 }
 
 function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppProps) {
@@ -67,19 +74,26 @@ function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppPr
   const [isPreparationRunning, setIsPreparationRunning] = useState(false);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [isRestRunning, setIsRestRunning] = useState(false);
+  const [currentRound, setCurrentRound] = useState(1);
 
   const handlePlayClick = () => {
     setIsPreparationRunning(true);
   };
 
   useEffect(() => {
+    setCurrentRound(1); // Reset the current round when settings change
     let interval: NodeJS.Timeout | null = null;
-
+  
+    const handlePlayClick = () => {
+      setIsPreparationRunning(true);
+    };
+  
     if (isPreparationRunning && currentTime > 0) {
       interval = setInterval(() => {
         setCurrentTime((prevTime) => prevTime - 1);
       }, 1000);
     } else if (isPreparationRunning && currentTime === 0) {
+      clearInterval(interval!);
       setIsPreparationRunning(false);
       setIsIntervalRunning(true);
       setCurrentTime(intervalTime);
@@ -88,6 +102,7 @@ function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppPr
         setCurrentTime((prevTime) => prevTime - 1);
       }, 1000);
     } else if (isIntervalRunning && currentTime === 0) {
+      clearInterval(interval!);
       setIsIntervalRunning(false);
       setIsRestRunning(true);
       setCurrentTime(restTime);
@@ -96,26 +111,34 @@ function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppPr
         setCurrentTime((prevTime) => prevTime - 1);
       }, 1000);
     } else if (isRestRunning && currentTime === 0) {
+      clearInterval(interval!);
       setIsRestRunning(false);
+      setCurrentRound((prevRound) => prevRound + 1);
+      handlePlayClick(); // Call handlePlayClick to start the next round
     }
-
+  
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
   }, [isPreparationRunning, isIntervalRunning, isRestRunning, currentTime, intervalTime, restTime]);
-
+  
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
+  const RoundDisplay = () => {
+    return <Text style={styles.roundDisplay}>Round {currentRound}</Text>;
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/hulamain.png')} style={styles.hulaMainImage} />
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
+      <RoundDisplay />
       <View style={styles.playContainer}>
         <TouchableOpacity onPress={handlePlayClick}>
           <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
@@ -129,11 +152,13 @@ function App({ onSettingsClick, intervalTime, restTime, preparationTime }: AppPr
   );
 }
 
+
 const MainScreen = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [intervalTime, setIntervalTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
   const [preparationTime, setPreparationTime] = useState(0);
+  const [currentRound, setCurrentRound] = useState(1);
 
   const handleSettingsClick = () => {
     setShowSettings(true);
