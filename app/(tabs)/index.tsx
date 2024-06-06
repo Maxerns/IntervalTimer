@@ -58,6 +58,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#4E586E',
   },
+  pauseButton: {
+    marginRight: 20,
+  },
+  stopButton: {
+    marginLeft: 20, 
+  },
 });
 
 interface AppProps {
@@ -82,10 +88,23 @@ function App({
   const [currentRound, setCurrentRound] = useState(1);
   const [totalRounds, setTotalRounds] = useState(numRounds);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlayClick = () => {
     setIsTimerRunning(true);
     setIsPreparationRunning(true);
+    setIsPlaying(true);
+  };
+
+  const handlePauseClick = () => {
+    setIsPlaying(false);
+
+  };
+
+  const handleStopClick = () => {
+    setIsPlaying(false);
+    setIsTimerRunning(false);
+    setCurrentTime(preparationTime);
   };
 
   useEffect(() => {
@@ -166,9 +185,20 @@ function App({
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
       <RoundDisplay currentRound={currentRound} totalRounds={totalRounds} />
       <View style={styles.playContainer}>
-        <TouchableOpacity onPress={handlePlayClick}>
-          <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
-        </TouchableOpacity>
+        {isPlaying ? (
+          <>
+            <TouchableOpacity onPress={handlePauseClick} style={styles.pauseButton}>
+              <FontAwesome6 name="pause-circle" size={playSize} color="#4E586E" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleStopClick} style={styles.stopButton}>
+              <FontAwesome6 name="circle-stop" size={playSize} color="#4E586E" />
+            </TouchableOpacity>
+          </>
+        ) : (
+          <TouchableOpacity onPress={handlePlayClick}>
+            <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
+          </TouchableOpacity>
+        )}
         <Text style={styles.intervalTimer}>
           {isTimerRunning ? formatTime(currentTime) : 'Ready'}
         </Text>
