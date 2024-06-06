@@ -89,29 +89,32 @@ function App({
   const [totalRounds, setTotalRounds] = useState(numRounds);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const handlePlayClick = () => {
     setIsTimerRunning(true);
     setIsPreparationRunning(true);
     setIsPlaying(true);
+    setIsPaused(false);
   };
 
   const handlePauseClick = () => {
     setIsPlaying(false);
-
+    setIsPaused(true);
   };
 
   const handleStopClick = () => {
     setIsPlaying(false);
     setIsTimerRunning(false);
     setCurrentTime(preparationTime);
+    setIsPaused(false);
   };
 
   useEffect(() => {
     setTotalRounds(numRounds);
     let interval: NodeJS.Timeout | null = null;
 
-    if (isTimerRunning) {
+    if (isTimerRunning && !isPaused) {
       if (isPreparationRunning && currentTime > 0) {
         interval = setInterval(() => {
           setCurrentTime((prevTime) => prevTime - 1);
@@ -167,6 +170,7 @@ function App({
     currentRound,
     totalRounds,
     isTimerRunning,
+    isPaused,
   ]);
 
   const formatTime = (timeInSeconds: number) => {
@@ -190,9 +194,15 @@ function App({
             <TouchableOpacity onPress={handlePauseClick} style={styles.pauseButton}>
               <FontAwesome6 name="pause-circle" size={playSize} color="#4E586E" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleStopClick} style={styles.stopButton}>
-              <FontAwesome6 name="circle-stop" size={playSize} color="#4E586E" />
-            </TouchableOpacity>
+            {isPaused ? (
+              <TouchableOpacity onPress={handlePlayClick} style={styles.stopButton}>
+                <FontAwesome6 name="play-circle" size={playSize} color="#4E586E" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleStopClick} style={styles.stopButton}>
+                <FontAwesome6 name="circle-stop" size={playSize} color="#4E586E" />
+              </TouchableOpacity>
+            )}
           </>
         ) : (
           <TouchableOpacity onPress={handlePlayClick}>
