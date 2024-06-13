@@ -33,6 +33,43 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
   },
+  firstHeader: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  intervalText: {
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  restText: {
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  preparationText: {
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  numRoundsText: {
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  picker: {
+    height: 50,
+    width: 100,
+    color: '#fff',
+    alignSelf: 'center',
+  },
+  pickerFlex: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  button: { 
+    backgroundColor: '#4E586E',
+    margin: 5,
+    alignSelf: 'center',
+  },
 });
 
 interface SettingsPageProps {
@@ -68,11 +105,11 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
       <Image source={require('../../assets/images/hulamain.png')} style={styles.hulaMainImage} />
       <Image source={require('../../assets/images/hulaoverlay.png')} style={styles.hulaOverlayImage} />
       <View style={styles.content}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Interval App Settings</Text>
-        <Text style={{ color: '#fff' }}>Interval Time:</Text>
-        <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.firstHeader}>Interval App Settings</Text>
+        <Text style={styles.intervalText}>Interval Time:</Text>
+        <View style={styles.pickerFlex}>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={intervalMinutes}
             onValueChange={(itemValue: string) => setIntervalMinutes(itemValue)}
           >
@@ -80,9 +117,9 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
               <Picker.Item key={value} label={value} value={value} />
             ))}
           </Picker>
-          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Text style={styles.picker}>:</Text>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={intervalSeconds}
             onValueChange={(itemValue: string) => setIntervalSeconds(itemValue)}
           >
@@ -92,10 +129,10 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
           </Picker>
         </View>
 
-        <Text style={{ color: '#fff' }}>Rest Time:</Text>
-        <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.restText}>Rest Time:</Text>
+        <View style={styles.pickerFlex}>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={restMinutes}
             onValueChange={(itemValue: string) => setRestMinutes(itemValue)}
           >
@@ -103,9 +140,9 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
               <Picker.Item key={value} label={value} value={value} />
             ))}
           </Picker>
-          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Text style={styles.picker}>:</Text>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={restSeconds}
             onValueChange={(itemValue: string) => setRestSeconds(itemValue)}
           >
@@ -115,10 +152,10 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
           </Picker>
         </View>
 
-        <Text style={{ color: '#fff' }}>Preparation Time:</Text>
-        <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.preparationText}>Preparation Time:</Text>
+        <View style={styles.pickerFlex}>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={preparationMinutes}
             onValueChange={(itemValue: string) => setPreparationMinutes(itemValue)}
           >
@@ -126,9 +163,9 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
               <Picker.Item key={value} label={value} value={value} />
             ))}
           </Picker>
-          <Text style={{ fontSize: 24, color: '#fff' }}>:</Text>
+          <Text style={styles.picker}>:</Text>
           <Picker
-            style={{ height: 50, width: 100, color: '#fff' }}
+            style={styles.picker}
             selectedValue={preparationSeconds}
             onValueChange={(itemValue: string) => setPreparationSeconds(itemValue)}
           >
@@ -138,9 +175,9 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
           </Picker>
         </View>
 
-        <Text style={{ color: '#fff' }}>Number of Rounds:</Text>
+        <Text style={styles.numRoundsText}>Number of Rounds:</Text>
         <Picker
-          style={{ height: 50, width: 100, color: '#fff' }}
+          style={styles.picker}
           selectedValue={numRounds}
           onValueChange={(itemValue: string) => setNumRounds(itemValue)}
         >
@@ -148,9 +185,12 @@ const SettingsPage = ({ onGoBack, onSaveSettings }: SettingsPageProps) => {
             <Picker.Item key={value} label={value} value={value} />
           ))}
         </Picker>
-
-        <Button title="Save" onPress={handleSubmit} />
-        <Button title="Go Back" onPress={onGoBack} />
+        <View style={styles.button}>
+           <Button title="Save" onPress={handleSubmit} color="#4E586E" />
+        </View>
+        <View style={styles.button}>
+           <Button title="Go Back" onPress={onGoBack} color="#4E586E" />
+        </View>
       </View>
     </View>
   );
